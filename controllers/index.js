@@ -118,6 +118,50 @@ const createControllers = () => {
 
           //for card selection of second group
           else {
+            //if 2nd card matches the 1st card
+            if (
+              fileContent.set2[cardNum - 1].card_id ===
+              fileContent.chosen_card_id
+            ) {
+              fileContent.set1[fileContent.chosen_card_id - 1].hide = true;
+              fileContent.set2[cardNum - 1].hide = true;
+              fileContent.cards_to_hide.set1.push(fileContent.chosen_card_id);
+              fileContent.cards_to_hide.set2.push(cardNum);
+              //write the data back to file
+              fs.writeFile(
+                `${filePath}/${fileId}.json`,
+                JSON.stringify(fileContent),
+                (err) => {
+                  if (err) {
+                    return res.status(400).send({ err });
+                  }
+                  return res.send({
+                    color: fileContent.set2[cardNum - 1].color,
+                    cardsToHide: fileContent.cards_to_hide,
+                    errorScore: fileContent.error_score,
+                  });
+                }
+              );
+            }
+            //if the cards dont match
+            else {
+              fileContent.error_score += 1;
+              fileContent.chosen_card_id = null;
+              fs.writeFile(
+                `${filePath}/${fileId}.json`,
+                JSON.stringify(fileContent),
+                (err) => {
+                  if (err) {
+                    return res.status(400).send({ err });
+                  }
+                  return res.send({
+                    color: fileContent.set2[cardNum - 1].color,
+                    cardsToHide: fileContent.cards_to_hide,
+                    errorScore: fileContent.error_score,
+                  });
+                }
+              );
+            }
           }
         });
       } catch (err) {

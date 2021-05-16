@@ -8,5 +8,8 @@
   "chosen_card_id": null,
   "completed_at": "",
   "score": 0,
-  "cards_to_hide": []
+  "cards_to_hide": {
+    "set1": [],
+    "set2": []
+  }
 }
