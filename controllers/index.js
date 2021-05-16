@@ -57,15 +57,15 @@ const createControllers = () => {
           if (err) {
             return res.status(400).send({ err });
           }
-        });
-        //write the data to file
-        fs.writeFile(`${filePath}/${fileId}.json`, content, (err) => {
-          if (err) {
-            return res.status(400).send({ err });
-          }
-        });
 
-        res.send({ fileId, noOfCardsPerSet });
+          //write the data to file
+          fs.writeFile(`${filePath}/${fileId}.json`, content, (err) => {
+            if (err) {
+              return res.status(400).send({ err });
+            }
+            res.send({ fileId, noOfCardsPerSet });
+          });
+        });
       } catch (err) {
         console.log('🚀 ~ file: index.js ~ line 67 ~ newGame: ~ err', err);
         res.status(400).send({ err });
@@ -108,16 +108,16 @@ const createControllers = () => {
                 if (err) {
                   return res.status(400).send({ err });
                 }
+                return res.send({
+                  startedAt: fileContent.started_at,
+                  color: fileContent.set1[cardNum - 1].color,
+                });
               }
             );
-            return res.send({
-              startedAt: fileContent.started_at,
-              color: fileContent.set1[cardNum - 1].color,
-            });
           }
 
           //for card selection of second group
-          if (set === 2) {
+          else {
           }
         });
       } catch (err) {
