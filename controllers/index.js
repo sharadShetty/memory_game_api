@@ -127,6 +127,14 @@ const createControllers = () => {
               fileContent.set2[cardNum - 1].hide = true;
               fileContent.cards_to_hide.set1.push(fileContent.chosen_card_id);
               fileContent.cards_to_hide.set2.push(cardNum);
+
+              //if all cards are matched
+              if (
+                fileContent.set1.length ===
+                fileContent.cards_to_hide.set1.length
+              ) {
+                fileContent.completed_at = Date.now();
+              }
               //write the data back to file
               fs.writeFile(
                 `${filePath}/${fileId}.json`,
@@ -139,6 +147,7 @@ const createControllers = () => {
                     color: fileContent.set2[cardNum - 1].color,
                     cardsToHide: fileContent.cards_to_hide,
                     errorScore: fileContent.error_score,
+                    completedAt: fileContent.completed_at,
                   });
                 }
               );
