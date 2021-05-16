@@ -7,6 +7,7 @@ const fileStructure = require('../utils/file-structure.json');
 
 const createControllers = () => {
   const controllers = {
+    //for checking status of API
     status: async (req, res) => {
       try {
         res.send("Welcome to Memory game's API.");
@@ -53,18 +54,77 @@ const createControllers = () => {
         const filePath = `/${appDir[1]}/${appDir[2]}/game-boards`;
         //create directory if it does not exists
         fs.mkdir(filePath, { recursive: true }, (err) => {
-          if (err) throw err;
+          if (err) {
+            return res.status(400).send({ err });
+          }
         });
         //write the data to file
         fs.writeFile(`${filePath}/${fileId}.json`, content, (err) => {
           if (err) {
-            if (err) throw err;
+            return res.status(400).send({ err });
           }
         });
 
         res.send({ fileId, noOfCardsPerSet });
       } catch (err) {
-        console.log('🚀 ~ file: index.js ~ line 23 ~ newGame: ~ err', err);
+        console.log('🚀 ~ file: index.js ~ line 67 ~ newGame: ~ err', err);
+        res.status(400).send({ err });
+      }
+    },
+
+    //after a card is chosen
+    cardSelection: async (req, res) => {
+      try {
+        const { set, cardNum, fileId } = req.body;
+        if (!set || !cardNum || !fileId) {
+          return res.status(400).send('set,cardNum and fileId is required');
+        }
+
+        const appDir = path.dirname(require.main.filename).split('/');
+        const filePath = `/${appDir[1]}/${appDir[2]}/game-boards`;
+        //read fie using file id
+        fs.readFile(`${filePath}/${fileId}.json`, 'utf8', function (err, data) {
+          if (err) {
+            return res.status(400).send({ err });
+          }
+          const fileContent = { ...JSON.parse(data) };
+
+          if (fileContent.completed_at) {
+            return res.status(400).send('Game is already completed');
+          }
+
+          //for card selection of first group
+          if (set === 1) {
+            if (!fileContent.started_at) {
+              fileContent.started_at = Date.now();
+            }
+            fileContent.chosen_card_id = cardNum;
+
+            //write the data back to file
+            fs.writeFile(
+              `${filePath}/${fileId}.json`,
+              JSON.stringify(fileContent),
+              (err) => {
+                if (err) {
+                  return res.status(400).send({ err });
+                }
+              }
+            );
+            return res.send({
+              startedAt: fileContent.started_at,
+              color: fileContent.set1[cardNum - 1].color,
+            });
+          }
+
+          //for card selection of second group
+          if (set === 2) {
+          }
+        });
+      } catch (err) {
+        console.log(
+          '🚀 ~ file: index.js ~ line 78 ~ cardSelection: ~ err',
+          err
+        );
         res.status(400).send({ err });
       }
     },
