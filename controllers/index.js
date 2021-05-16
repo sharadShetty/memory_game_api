@@ -1,7 +1,11 @@
 const fs = require('fs');
 const distinctColors = require('distinct-colors').default;
 const path = require('path');
-const { shuffleArray, getNoOfCardsPerSet } = require('../utils/functions');
+const {
+  shuffleArray,
+  getNoOfCardsPerSet,
+  calculateScore,
+} = require('../utils/functions');
 
 const fileStructure = require('../utils/file-structure.json');
 
@@ -134,6 +138,11 @@ const createControllers = () => {
                 fileContent.cards_to_hide.set1.length
               ) {
                 fileContent.completed_at = Date.now();
+                fileContent.score = calculateScore(
+                  fileContent.started_at,
+                  fileContent.completed_at,
+                  fileContent.error_score
+                );
               }
               //write the data back to file
               fs.writeFile(
@@ -148,6 +157,7 @@ const createControllers = () => {
                     cardsToHide: fileContent.cards_to_hide,
                     errorScore: fileContent.error_score,
                     completedAt: fileContent.completed_at,
+                    score: fileContent.score,
                   });
                 }
               );

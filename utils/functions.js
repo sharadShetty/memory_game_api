@@ -20,6 +20,12 @@ const functions = {
         return 25;
     }
   },
+
+  calculateScore: (startTime, endTime, errorScore) => {
+    let timeScore = Math.round((endTime - startTime) / 10000);
+    let score = 100 - errorScore - timeScore;
+    return score < 0 ? 0 : score;
+  },
 };
 
 module.exports = functions;
