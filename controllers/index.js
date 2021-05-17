@@ -40,13 +40,13 @@ const createControllers = () => {
 
         const fileContent = { ...fileStructure, file_id: fileId, difficulty };
         //create 1st set of cards
-        const set1 = distinctColors({ count: noOfCardsPerSet }).map(
-          (rgbValue, index) => ({
-            card_id: index + 1,
-            hide: false,
-            color: `rgb(${rgbValue._rgb[0]},${rgbValue._rgb[1]},${rgbValue._rgb[2]})`,
-          })
-        );
+        const set1 = shuffleArray(
+          distinctColors({ count: noOfCardsPerSet })
+        ).map((rgbValue, index) => ({
+          card_id: index + 1,
+          hide: false,
+          color: `rgb(${rgbValue._rgb[0]},${rgbValue._rgb[1]},${rgbValue._rgb[2]})`,
+        }));
         //create 2nd set of cards
         const set2 = shuffleArray(set1);
 
